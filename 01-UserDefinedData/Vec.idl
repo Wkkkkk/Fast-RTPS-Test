@@ -1,0 +1,11 @@
+#include "Base.idl"
+struct mPointVec
+{
+    octet id;
+    sequence<mPoint> points;
+};
+struct mLineVec
+{
+    octet id;
+    sequence<mLine> points;
+};
