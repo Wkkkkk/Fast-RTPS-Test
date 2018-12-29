@@ -1,0 +1,5 @@
+struct BigData
+{
+    @key octet id;
+    char array[500000];
+};
