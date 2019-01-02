@@ -1,0 +1,37 @@
+struct SenderInfo
+{
+    octet id;
+    string name;
+};
+
+struct mPoint
+{
+    SenderInfo sender_info;
+
+    octet id;
+    double x, y, z;
+};
+
+struct mLine
+{
+    SenderInfo sender_info;
+
+    octet id;
+    mPoint p1, p2;
+};
+
+struct mPointSeq
+{
+    SenderInfo sender_info;
+
+    octet id;
+    sequence<mPoint> points;
+};
+
+struct mLineSeq
+{
+    SenderInfo sender_info;
+
+    octet id;
+    sequence<mLine> points;
+};
