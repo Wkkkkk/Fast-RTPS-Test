@@ -89,7 +89,7 @@ void AdvancedInfoSubscriber::SubListener::onNewDataMessage(Subscriber *sub) {
             std::cout << "Sample received, count=" << n_msg << std::endl;
 
             // More info
-            // message status: ALIVE
+            // message status: ALIVE(0)
             std::cout << "---sampleKind: " << m_info.sampleKind << std::endl;
 
             // WriterGUID: Signature of the sender
@@ -98,8 +98,8 @@ void AdvancedInfoSubscriber::SubListener::onNewDataMessage(Subscriber *sub) {
 
             // the moment the sample was encapsulated and sent
             auto timestamp_cp = m_info.sourceTimestamp;
-            clock.setTimeNow(&timestamp_cp);
-            std::cout << "---deliver time: " << timestamp_cp - m_info.sourceTimestamp << std::endl;
+            bool result = clock.setTimeNow(&timestamp_cp);
+            std::cout << "---deliver time: " << result << " " << timestamp_cp - m_info.sourceTimestamp << std::endl;
 
             // When several senders are writing the same data
             // this field can be used to determine which data is more reliable.
