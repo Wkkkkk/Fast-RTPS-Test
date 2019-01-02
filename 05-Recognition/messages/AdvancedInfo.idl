@@ -1,0 +1,22 @@
+#include "BasicInfo.idl"
+
+struct mPointArray
+{
+    octet id;
+    mPoint points[500];
+};
+struct mLineArray
+{
+    octet id;
+    mLine points[500];
+};
+struct mPointVec
+{
+    octet id;
+    sequence<mPoint> points;
+};
+struct mLineVec
+{
+    octet id;
+    sequence<mLine> points;
+};

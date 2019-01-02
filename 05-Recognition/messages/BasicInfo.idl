@@ -1,0 +1,19 @@
+struct mPoint
+{
+    octet id;
+    double x, y, z;
+};
+
+struct mLine
+{
+    octet id;
+    mPoint p1, p2;
+};
+
+enum ENUM_TYPE
+{
+	FORWARD,
+	LEFT,
+	RIGHT,
+	BACKWARD
+};
