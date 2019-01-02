@@ -83,10 +83,6 @@ void InfoSubscriber::SubListener::onNewDataMessage(Subscriber *sub) {
             // Print your structure data here.
             std::cout << "Sample received, id:" << std::to_string(st.id()) << " from: " << st.sender_info().name()
                       << std::endl;
-
-            auto timestamp_cp = m_info.sourceTimestamp;
-            bool result = clock.setTimeNow(&timestamp_cp);
-            std::cout << "---deliver time: " << result << " " << timestamp_cp - m_info.sourceTimestamp << std::endl;
         }
     }
 }

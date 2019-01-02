@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <profiles>
     <participant profile_name="participant_profile">
-        <name>PC-01</name>
         <rtps>
+            <name>PC-01</name>
             <builtin>
                 <domainId>80</domainId>
                 <leaseDuration>
