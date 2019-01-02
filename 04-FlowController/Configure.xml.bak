@@ -1,21 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <profiles>
-    <transport_descriptors>
-        <transport_descriptor>
-            <transport_id>udp_transport_test</transport_id>
-            <type>UDPv4</type>
-            <listening_ports>
-                <port>5100</port>
-            </listening_ports>
-        </transport_descriptor>
-    </transport_descriptors>
 
     <participant profile_name="participant_profile">
         <rtps>
-            <userTransports>
-                <transport_id>udp_transport_test</transport_id>
-            </userTransports>
-            <useBuiltinTransports>false</useBuiltinTransports>
             <builtin>
                 <domainId>80</domainId>
                 <leaseDuration>
@@ -44,7 +31,7 @@
             </publishMode>
         </qos>
         <throughputController>
-            <bytesPerPeriod>1000000</bytesPerPeriod>
+            <bytesPerPeriod>10000</bytesPerPeriod>
             <periodMillisecs>1000</periodMillisecs>
         </throughputController>
         <historyMemoryPolicy>PREALLOCATED</historyMemoryPolicy>

@@ -18,6 +18,7 @@ target_link_libraries(FlowControl_lib fastcdr fastrtps)
 file(COPY ${PROJECT_SOURCE_DIR}/Configure.xml
         DESTINATION ${PROJECT_BINARY_DIR}
         )
+message(STATUS "Copying XML...")
 
 add_executable(FlowControl FlowControlPubSubTypes.cxx FlowControlPublisher.cxx FlowControlSubscriber.cxx FlowControlPubSubMain.cxx)
 target_link_libraries(FlowControl fastcdr fastrtps
