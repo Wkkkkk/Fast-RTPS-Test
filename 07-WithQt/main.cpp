@@ -62,10 +62,6 @@ int main(int argc, char *argv[]) {
 
     RTPSNodeThread rtpsNodeThread;
     rtpsNodeThread.start();  // trigger signal
-    while (1) {
-        std::cout << "Main thread working..." << std::endl;
-        eClock::my_sleep(1000); // Sleep 1 s;
-    }
 
     return app.exec();
 }

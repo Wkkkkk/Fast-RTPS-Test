@@ -100,7 +100,7 @@ void RTPSNode::SubListener::onNewDataMessage(Subscriber *sub) {
     if (sub->takeNextData(&st, &m_info)) {
         if (m_info.sampleKind == ALIVE) {
             // Print your structure data here.
-            m_callback(st);
+            emit m_callback(st);
         }
     }
 }

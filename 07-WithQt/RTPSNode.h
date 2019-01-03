@@ -80,11 +80,9 @@ private:
     Vec3PubSubType myType;
 
 public slots:
-
     void run();
 
 signals:
-
     void resultReady(Vec3 pos);
 };
 
@@ -98,7 +96,7 @@ public:
             worker->moveToThread(&workerThread);
             connect(&workerThread, &QThread::finished, worker, &QObject::deleteLater);
             connect(this, &RTPSNodeThread::start, worker, &RTPSNode::run);
-            connect(worker, &RTPSNode::resultReady, this, &RTPSNodeThread::handleResults);
+            connect(worker, &RTPSNode::resultReady, this, &RTPSNodeThread::handleResults, Qt::QueuedConnection);
             workerThread.start();
             std::cout << "workerThread start..." << std::endl;
         } else {

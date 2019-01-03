@@ -14,9 +14,6 @@ find_package(Qt5Widgets CONFIG REQUIRED)
 find_package(Qt5Core CONFIG REQUIRED)
 find_package(Qt5Gui CONFIG REQUIRED)
 find_package(Qt5Network CONFIG REQUIRED)
-#find_package(OpenSceneGraph 3.2 REQUIRED COMPONENTS osgGA osgViewer osgDB osgUtil osgText osg osgQt osgFX)
-
-#include_directories(${OPENSCENEGRAPH_INCLUDE_DIRS})
 
 file(GLOB SOURCES_CXX "*.cxx")
 file(GLOB SOURCES_CPP "*.cpp")
@@ -33,5 +30,4 @@ target_link_libraries(WithQt
         Qt5::Widgets
         Qt5::Core
         Qt5::Network
-        #        ${OPENSCENEGRAPH_LIBRARIES}
         )
