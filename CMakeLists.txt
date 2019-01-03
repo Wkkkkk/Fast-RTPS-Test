@@ -12,3 +12,8 @@ add_subdirectory(03-BigData)
 add_subdirectory(04-FlowController)
 add_subdirectory(05-Recognition)
 add_subdirectory(06-Communication)
+
+find_package(Qt5Widgets QUIET)
+if (Qt5Widgets_FOUND)
+    add_subdirectory(07-WithQt)
+endif ()

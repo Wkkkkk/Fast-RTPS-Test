@@ -89,7 +89,7 @@ void AdvancedInfoSubscriber::SubListener::onNewDataMessage(Subscriber *sub) {
             std::cout << "Sample received, count=" << n_msg << std::endl;
 
             // More info
-            // message status: ALIVE(0)
+            // Info.idl status: ALIVE(0)
             std::cout << "---sampleKind: " << m_info.sampleKind << std::endl;
 
             // WriterGUID: Signature of the sender
