@@ -88,17 +88,17 @@ signals:
     void resultReady(Vec3 pos);
 };
 
-class RTPSNodeController : public QObject {
+class RTPSNodeThread : public QObject {
 Q_OBJECT
     QThread workerThread;
 public:
-    RTPSNodeController() {
+    RTPSNodeThread() {
         RTPSNode *worker = new RTPSNode;
         if (worker->init()) {
             worker->moveToThread(&workerThread);
             connect(&workerThread, &QThread::finished, worker, &QObject::deleteLater);
-            connect(this, &RTPSNodeController::start, worker, &RTPSNode::run);
-            connect(worker, &RTPSNode::resultReady, this, &RTPSNodeController::handleResults);
+            connect(this, &RTPSNodeThread::start, worker, &RTPSNode::run);
+            connect(worker, &RTPSNode::resultReady, this, &RTPSNodeThread::handleResults);
             workerThread.start();
             std::cout << "workerThread start..." << std::endl;
         } else {
@@ -106,18 +106,16 @@ public:
         }
     }
 
-    ~RTPSNodeController() {
+    ~RTPSNodeThread() {
         workerThread.quit();
         workerThread.wait();
     }
 
 public slots:
-
     void handleResults(Vec3 pos) {
         std::cout << "handleResults: " << pos.x() << " " << pos.y() << " " << pos.z() << std::endl;
     };
 signals:
-
     void start();
 };
 

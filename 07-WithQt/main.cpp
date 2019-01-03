@@ -49,7 +49,6 @@ int main(int argc, char *argv[]) {
     parser.addVersionOption();
     parser.addPositionalArgument("mode",
                                  "working mode: show, normal. default: normal");
-
     parser.process(app);
     QStringList posArgs = parser.positionalArguments();
     bool show_widget = false;
@@ -61,8 +60,8 @@ int main(int argc, char *argv[]) {
     }
     std::cout << "show_widget: " << show_widget << std::endl;
 
-    RTPSNodeController controller;
-    controller.start();  // trigger signal
+    RTPSNodeThread rtpsNodeThread;
+    rtpsNodeThread.start();  // trigger signal
     while (1) {
         std::cout << "Main thread working..." << std::endl;
         eClock::my_sleep(1000); // Sleep 1 s;
