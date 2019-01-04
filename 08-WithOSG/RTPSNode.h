@@ -71,12 +71,15 @@ private:
 
         void onNewDataMessage(eprosima::fastrtps::Subscriber *sub);
 
-        void setCallBack(std::function<void(QString, Vec3)> callback) { m_callback = callback; }
+        inline void setPositionCallBack(std::function<void(QString, Vec3)> callback) { m_position_cb = callback; }
+
+        inline void setFindCallBack(std::function<void(QString, bool)> callback) { m_find_cb = callback; }
 
         eprosima::fastrtps::SampleInfo_t m_info;
         int n_matched;
         int n_msg;
-        std::function<void(QString, Vec3)> m_callback;
+        std::function<void(QString, Vec3)> m_position_cb;
+        std::function<void(QString, bool)> m_find_cb;
     } m_sub_listener;
 
     Vec3PubSubType myType;
@@ -87,43 +90,61 @@ public slots:
 
 signals:
 
-    void resultReady(const QString &guid, const Vec3 &pos);
+    void connectPartner(const QString &guid, bool connect);
+
+    void findPartnerAt(const QString &guid, const Vec3 &pos);
 };
 
 class RTPSNodeThread : public QObject {
 Q_OBJECT
     QThread workerThread;
 public:
-    RTPSNodeThread() {
-        RTPSNode *worker = new RTPSNode;
-        if (worker->init()) {
-            worker->moveToThread(&workerThread);
-            connect(&workerThread, &QThread::finished, worker, &QObject::deleteLater);
-            connect(this, &RTPSNodeThread::start, worker, &RTPSNode::run);
-            connect(worker, &RTPSNode::resultReady, this, &RTPSNodeThread::handleResults, Qt::QueuedConnection);
-            workerThread.start();
-            std::cout << "workerThread start..." << std::endl;
-        } else {
-            std::cout << "failed to create RTPSNode..." << std::endl;
-        }
-    }
+    RTPSNodeThread() {}
 
     ~RTPSNodeThread() {
         workerThread.quit();
         workerThread.wait();
     }
 
+    void init() {
+        RTPSNode *worker = new RTPSNode;
+        connect(&workerThread, &QThread::finished, worker, &QObject::deleteLater);
+        connect(this, &RTPSNodeThread::start, worker, &RTPSNode::run);
+        connect(worker, &RTPSNode::connectPartner, this, &RTPSNodeThread::createConnect);
+        connect(worker, &RTPSNode::findPartnerAt, this, &RTPSNodeThread::diliverPartnerPos);
+
+        if (worker->init()) {
+            worker->moveToThread(&workerThread);
+            workerThread.start();
+            std::cout << "workerThread start..." << std::endl;
+        } else {
+            std::cout << "failed to create RTPSNode..." << std::endl;
+        }
+    }
     Q_DISABLE_COPY(RTPSNodeThread)
 
 public slots:
 
-    void handleResults(const QString &guid, const Vec3 &pos) {
+    void diliverPartnerPos(const QString &guid, const Vec3 &pos) {
         std::cout << "receiver message: " << pos.x() << " " << pos.y() << " " << pos.z() << " from: "
                   << guid.toStdString() << std::endl;
+
+        emit updatePositionOfNodeWithName(guid, pos);
+    };
+
+    void createConnect(const QString &guid, bool connect) {
+        std::string type = "disconnect";
+        if (connect) type = "connect";
+        std::cout << type << " with: " << guid.toStdString() << std::endl;
+
+        emit createOrRemoveNodeWithName(guid, connect);
     };
 signals:
-
     void start();
+
+    void createOrRemoveNodeWithName(QString guid, bool create);
+
+    void updatePositionOfNodeWithName(QString guid, const Vec3 &pos);
 };
 
 #endif //FAST_RTPS_TEST_RTPSNODE_H

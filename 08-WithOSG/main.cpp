@@ -50,15 +50,14 @@ int main(int argc, char *argv[]) {
     std::cout << "show_widget: " << show_widget << std::endl;
 
     RTPSNodeThread rtpsNodeThread;
-    rtpsNodeThread.start();  // trigger signal
 
     MainWindow main_window;
     main_window.setMinimumSize(800, 600);  //graphic_context bugs!
-    main_window.createConnect();
+    main_window.createConnect(rtpsNodeThread);
+    main_window.showMaximized();
 
-    if (show_widget) {
-        main_window.show();
-    }
+    rtpsNodeThread.init();
+    rtpsNodeThread.start();  // trigger signal
 
     return app.exec();
 }

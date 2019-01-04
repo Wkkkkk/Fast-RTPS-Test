@@ -26,9 +26,12 @@
 #include <QtWidgets/QTreeWidget>
 #include <QtWidgets/QAction>
 #include <QtWidgets/QLabel>
+#include <QtCore/QObject>
 #include <QtCore/QScopedPointer>
 
 class OSGWidget;
+
+class RTPSNodeThread;
 
 class MainWindow : public QMainWindow {
 Q_OBJECT
@@ -37,7 +40,7 @@ public:
 
     ~MainWindow() final;
 
-    void createConnect();
+    void createConnect(const RTPSNodeThread &rtpsNodeThread);
 
     Q_DISABLE_COPY(MainWindow);
 private:

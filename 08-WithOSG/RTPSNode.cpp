@@ -17,6 +17,7 @@
  * limitations under the License.
 */
 #include <sstream>
+#include <stdlib.h>
 
 #include <fastrtps/participant/Participant.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
@@ -50,6 +51,16 @@ bool RTPSNode::init() {
     // Register the type
     Domain::registerType(mp_participant, (TopicDataType *) &myType);
 
+    // Register callback before they are called!!
+    std::function<void(QString, Vec3)> position_callback = std::bind(&RTPSNode::findPartnerAt, this,
+                                                                     std::placeholders::_1,
+                                                                     std::placeholders::_2);
+    m_sub_listener.setPositionCallBack(position_callback);
+
+    std::function<void(QString, bool)> find_callback = std::bind(&RTPSNode::connectPartner, this, std::placeholders::_1,
+                                                                 std::placeholders::_2);
+    m_sub_listener.setFindCallBack(find_callback);
+
     // Create Publisher
     std::string profile_name = "publisher_profile";
     mp_publisher = Domain::createPublisher(mp_participant, profile_name, (PublisherListener *) &m_pub_listener);
@@ -62,11 +73,6 @@ bool RTPSNode::init() {
                                              (SubscriberListener *) &m_sub_listener);
     if (mp_subscriber == nullptr) return false;
     std::cout << "Subscriber created, waiting for Publishers." << std::endl;
-
-    std::function<void(QString, Vec3)> callback = std::bind(&RTPSNode::resultReady, this, std::placeholders::_1,
-                                                            std::placeholders::_2);
-    m_sub_listener.setCallBack(callback);
-
     return true;
 }
 
@@ -85,13 +91,20 @@ void RTPSNode::PubListener::onPublicationMatched(Publisher *pub, MatchingInfo &i
 void RTPSNode::SubListener::onSubscriptionMatched(Subscriber *sub, MatchingInfo &info) {
     (void) sub;
 
+    bool connect = false;
     if (info.status == MATCHED_MATCHING) {
         n_matched++;
         std::cout << "Subscriber matched" << std::endl;
+        connect = true;
     } else {
         n_matched--;
         std::cout << "Subscriber unmatched" << std::endl;
     }
+
+    std::ostringstream os;
+    os << info.remoteEndpointGuid;
+    QString guid_str = QString::fromStdString(os.str());
+    emit m_find_cb(guid_str, connect);
 }
 
 void RTPSNode::SubListener::onNewDataMessage(Subscriber *sub) {
@@ -104,9 +117,9 @@ void RTPSNode::SubListener::onNewDataMessage(Subscriber *sub) {
             // Print your structure data here.
             // m_info.sample_identity.writer_guid()
             std::ostringstream os;
-            os << m_info.sample_identity.writer_guid() << std::endl;
+            os << m_info.sample_identity.writer_guid();
             QString guid_str = QString::fromStdString(os.str());
-            emit m_callback(guid_str, std::move(st));
+            emit m_position_cb(guid_str, std::move(st));
         }
     }
 }
@@ -120,21 +133,28 @@ void RTPSNode::run() {
     // Publication code
 
     Vec3 st;
-
+    st.x() = rand() % 10;
+    st.z() = rand() % 10;
     /* Initialize your structure here */
 
     int msgsent = 0;
-    char ch = 'y';
+    char ch = 'w';
     do {
-        if (ch == 'y') {
-            mp_publisher->write(&st);
-            ++msgsent;
-            std::cout << "Sending sample, count=" << msgsent << ", send another sample?(y-yes,n-stop): ";
-        } else if (ch == 'n') {
-            std::cout << "Stopping execution " << std::endl;
-            break;
+        if (ch == 'w') {
+            st.x()++;
+        } else if (ch == 's') {
+            st.x()--;
+        } else if (ch == 'a') {
+            st.z()--;
+        } else if (ch == 'd') {
+            st.z()++;
         } else {
             std::cout << "Command " << ch << " not recognized, please enter \"y/n\":";
+            continue;
         }
+
+        mp_publisher->write(&st);
+        ++msgsent;
+        std::cout << "Sending sample, count=" << msgsent << ", send another sample?(y-yes,n-stop): ";
     } while (std::cin >> ch);
 }

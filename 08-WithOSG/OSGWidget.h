@@ -23,6 +23,7 @@
 #include <QtWidgets/QWidget>
 #include <QtCore/QFileInfo>
 #include <QtCore/QString>
+#include <QtCore/QObject>
 #include <QtCore/QTimer>
 #include <QtCore/QScopedPointer>
 #include <QtGui/QPaintEvent>
@@ -37,6 +38,8 @@
 #include <osgGA/TrackballManipulator>
 #include <osgGA/TerrainManipulator>
 #include <osgQt/GraphicsWindowQt>
+
+class Vec3;
 
 class OSGWidget : public QWidget, public osgViewer::CompositeViewer {
 Q_OBJECT
@@ -78,6 +81,10 @@ private:
     QScopedPointer<QTimer> update_timer_;
 
 public slots:
+
+    void createOrRemoveNode(const QString &guid, bool create);
+
+    void updatePositionOfNode(const QString &guid, const Vec3 &pos);
 };
 
 

@@ -32,8 +32,9 @@
 #include <QtCore/QStringList>
 #include <QtCore/QFileInfoList>
 
-#include "MainWindow.h"
+#include "RTPSNode.h"
 #include "OSGWidget.h"
+#include "MainWindow.h"
 
 MainWindow::MainWindow(QWidget *parent) :
         QMainWindow(parent),
@@ -115,8 +116,11 @@ void MainWindow::createDockWidget() {
     //connect(edit_widget_, SIGNAL(itemPressed(QTreeWidgetItem *, int)), this, SLOT(TreeWidgetRightedClicked(QTreeWidgetItem *, int)));
 }
 
-void MainWindow::createConnect() {
-
+void MainWindow::createConnect(const RTPSNodeThread &rtpsNodeThread) {
+    connect(&rtpsNodeThread, SIGNAL(createOrRemoveNodeWithName(QString, bool)), osgwidget_,
+            SLOT(createOrRemoveNode(QString, bool)));
+    connect(&rtpsNodeThread, SIGNAL(updatePositionOfNodeWithName(QString, Vec3)), osgwidget_,
+            SLOT(updatePositionOfNode(QString, Vec3)));
 }
 
 void MainWindow::openFile() {

@@ -44,6 +44,7 @@
 #include "NodeCallback.h"
 #include "NodeTreeInfo.h"
 #include "NodeTreeSearch.h"
+#include "message/Info.h"
 
 OSGWidget::OSGWidget(QWidget *parent) :
         QWidget(parent),
@@ -81,10 +82,6 @@ void OSGWidget::initSceneGraph() {
     osg::ref_ptr<osg::Switch> self_node = new osg::Switch;
     self_node->setName(self_node_name);
     root_node_->addChild(self_node);
-
-    osg::ref_ptr<osg::Switch> other_node = new osg::Switch;
-    other_node->setName(test_node_name);
-    root_node_->addChild(other_node);
 
     osg::ref_ptr<osg::Camera> hud_node = createHUD();
     hud_node->setName(hud_node_name);
@@ -299,4 +296,41 @@ osg::Vec3d OSGWidget::calculateColorForPoint(const osg::Vec3d &point) const {
     if (range == 0) range = 1;
 
     return Colors[Colors.size() - range];
+}
+
+void OSGWidget::createOrRemoveNode(const QString &guid, bool create) {
+    static osg::ref_ptr<osg::Switch> test_node = dynamic_cast<osg::Switch *>(
+            NodeTreeSearch::findNodeWithName(root_node_, test_node_name));
+
+    if (create) {
+        osg::ref_ptr<osg::PositionAttitudeTransform> pos = new osg::PositionAttitudeTransform;
+        osg::ref_ptr<osg::Geode> geode = new osg::Geode;
+        osg::ref_ptr<osg::ShapeDrawable> point_sphere = new osg::ShapeDrawable(new osg::Sphere(osg::Vec3d(), 0.5f));
+        point_sphere->setColor(osg::Vec4(1.0, 0.0, 0.0, 1.0));
+        geode->addDrawable(point_sphere);
+
+        pos->addChild(geode);
+        pos->setName(guid.toStdString());
+
+        test_node->addChild(pos);
+    } else {
+        osg::ref_ptr<osg::PositionAttitudeTransform> node = dynamic_cast<osg::PositionAttitudeTransform *>(
+                NodeTreeSearch::findNodeWithName(test_node, guid.toStdString().c_str()));
+
+        if (node.valid()) {
+            test_node->removeChild(node.release());
+        }
+    }
+}
+
+void OSGWidget::updatePositionOfNode(const QString &guid, const Vec3 &pos) {
+    static osg::ref_ptr<osg::Switch> test_node = dynamic_cast<osg::Switch *>(
+            NodeTreeSearch::findNodeWithName(root_node_, test_node_name));
+
+    osg::ref_ptr<osg::PositionAttitudeTransform> node = dynamic_cast<osg::PositionAttitudeTransform *>(
+            NodeTreeSearch::findNodeWithName(test_node, guid.toStdString().c_str()));
+
+    if (node.valid()) {
+        node->setPosition(osg::Vec3d(pos.x(), pos.y(), pos.z()));
+    }
 }
