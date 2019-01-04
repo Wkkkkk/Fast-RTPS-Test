@@ -16,8 +16,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
 */
-#include <sstream>
+#include <time.h>
 #include <stdlib.h>
+#include <sstream>
 
 #include <fastrtps/participant/Participant.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
@@ -131,6 +132,7 @@ void RTPSNode::run() {
     }
 
     // Publication code
+    srand((int) time(0));
 
     Vec3 st;
     st.x() = rand() % 10;
@@ -141,13 +143,13 @@ void RTPSNode::run() {
     char ch = 'w';
     do {
         if (ch == 'w') {
-            st.x()++;
-        } else if (ch == 's') {
-            st.x()--;
-        } else if (ch == 'a') {
-            st.z()--;
-        } else if (ch == 'd') {
             st.z()++;
+        } else if (ch == 's') {
+            st.z()--;
+        } else if (ch == 'a') {
+            st.x()--;
+        } else if (ch == 'd') {
+            st.x()++;
         } else {
             std::cout << "Command " << ch << " not recognized, please enter \"y/n\":";
             continue;

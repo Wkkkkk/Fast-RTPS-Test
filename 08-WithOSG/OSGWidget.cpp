@@ -330,7 +330,8 @@ void OSGWidget::updatePositionOfNode(const QString &guid, const Vec3 &pos) {
     osg::ref_ptr<osg::PositionAttitudeTransform> node = dynamic_cast<osg::PositionAttitudeTransform *>(
             NodeTreeSearch::findNodeWithName(test_node, guid.toStdString().c_str()));
 
-    if (node.valid()) {
-        node->setPosition(osg::Vec3d(pos.x(), pos.y(), pos.z()));
+    if (!node.valid()) {
+        createOrRemoveNode(guid, true);
     }
+    node->setPosition(osg::Vec3d(pos.x(), pos.y(), pos.z()));
 }

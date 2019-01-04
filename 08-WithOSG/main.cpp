@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
     MainWindow main_window;
     main_window.setMinimumSize(800, 600);  //graphic_context bugs!
     main_window.createConnect(rtpsNodeThread);
-    main_window.showMaximized();
+    if (show_widget) main_window.showMaximized();
 
     rtpsNodeThread.init();
     rtpsNodeThread.start();  // trigger signal
