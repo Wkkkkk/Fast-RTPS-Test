@@ -14,6 +14,7 @@ Just some test on Fast-RTPS.
 <2>complex_test:
 1.communication with multi-thread
 2.car simulation in osg
+3.template test
 
 TODO:
 Listener

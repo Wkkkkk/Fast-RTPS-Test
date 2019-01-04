@@ -1,0 +1,12 @@
+struct Vec3
+{
+    double x, y, z;
+};
+
+enum ACTION
+{
+    TOWARDS_LEFT,
+    TOWARDS_RIGHT,
+    TOWARDS_UP,
+    TOWARDS_DOWN
+};

@@ -16,6 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
 */
+#include <sstream>
 
 #include <fastrtps/participant/Participant.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
@@ -62,7 +63,8 @@ bool RTPSNode::init() {
     if (mp_subscriber == nullptr) return false;
     std::cout << "Subscriber created, waiting for Publishers." << std::endl;
 
-    std::function<void(Vec3)> callback = std::bind(&RTPSNode::resultReady, this, std::placeholders::_1);
+    std::function<void(QString, Vec3)> callback = std::bind(&RTPSNode::resultReady, this, std::placeholders::_1,
+                                                            std::placeholders::_2);
     m_sub_listener.setCallBack(callback);
 
     return true;
@@ -100,7 +102,11 @@ void RTPSNode::SubListener::onNewDataMessage(Subscriber *sub) {
     if (sub->takeNextData(&st, &m_info)) {
         if (m_info.sampleKind == ALIVE) {
             // Print your structure data here.
-            emit m_callback(std::move(st));
+            // m_info.sample_identity.writer_guid()
+            std::ostringstream os;
+            os << m_info.sample_identity.writer_guid() << std::endl;
+            QString guid_str = QString::fromStdString(os.str());
+            emit m_callback(guid_str, std::move(st));
         }
     }
 }

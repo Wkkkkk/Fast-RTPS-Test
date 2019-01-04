@@ -25,6 +25,7 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QThread>
+#include <QtCore/QString>
 
 #include <fastrtps/fastrtps_fwd.h>
 #include <fastrtps/publisher/PublisherListener.h>
@@ -41,6 +42,8 @@ public:
     virtual ~RTPSNode();
 
     bool init();
+
+    Q_DISABLE_COPY(RTPSNode)
 
 private:
     eprosima::fastrtps::Participant *mp_participant;
@@ -68,22 +71,23 @@ private:
 
         void onNewDataMessage(eprosima::fastrtps::Subscriber *sub);
 
-        void setCallBack(std::function<void(Vec3)> callback) { m_callback = callback; }
+        void setCallBack(std::function<void(QString, Vec3)> callback) { m_callback = callback; }
 
         eprosima::fastrtps::SampleInfo_t m_info;
         int n_matched;
         int n_msg;
-        std::function<void(Vec3)> m_callback;
+        std::function<void(QString, Vec3)> m_callback;
     } m_sub_listener;
 
     Vec3PubSubType myType;
 
 public slots:
+
     void run();
 
 signals:
 
-    void resultReady(const Vec3 &pos);
+    void resultReady(const QString &guid, const Vec3 &pos);
 };
 
 class RTPSNodeThread : public QObject {
@@ -109,12 +113,16 @@ public:
         workerThread.wait();
     }
 
+    Q_DISABLE_COPY(RTPSNodeThread)
+
 public slots:
 
-    void handleResults(const Vec3 &pos) {
-        std::cout << "handleResults: " << pos.x() << " " << pos.y() << " " << pos.z() << std::endl;
+    void handleResults(const QString &guid, const Vec3 &pos) {
+        std::cout << "receiver message: " << pos.x() << " " << pos.y() << " " << pos.z() << " from: "
+                  << guid.toStdString() << std::endl;
     };
 signals:
+
     void start();
 };
 
