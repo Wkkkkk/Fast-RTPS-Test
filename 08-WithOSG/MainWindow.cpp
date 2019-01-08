@@ -66,7 +66,7 @@ void MainWindow::initUI() {
 void MainWindow::createMenu() {
     open_file_action = new QAction("Open", this);
     open_file_action->setIcon(QIcon(":/images/file_open.png"));
-    connect(open_file_action, SIGNAL(triggered()), this, SLOT(openFile()));
+    connect(open_file_action, &QAction::triggered, this, &MainWindow::openFile);
 }
 
 void MainWindow::createToolBar() {
@@ -117,10 +117,9 @@ void MainWindow::createDockWidget() {
 }
 
 void MainWindow::createConnect(const RTPSNodeThread &rtpsNodeThread) {
-    connect(&rtpsNodeThread, SIGNAL(createOrRemoveNodeWithName(QString, bool)), osgwidget_,
-            SLOT(createOrRemoveNode(QString, bool)));
-    connect(&rtpsNodeThread, SIGNAL(updatePositionOfNodeWithName(QString, Vec3)), osgwidget_,
-            SLOT(updatePositionOfNode(QString, Vec3)));
+    connect(&rtpsNodeThread, &RTPSNodeThread::createOrRemoveNodeWithName, osgwidget_, &OSGWidget::createOrRemoveNode);
+    connect(&rtpsNodeThread, &RTPSNodeThread::updatePositionOfNodeWithName, osgwidget_,
+            &OSGWidget::updatePositionOfNode);
 }
 
 void MainWindow::openFile() {
