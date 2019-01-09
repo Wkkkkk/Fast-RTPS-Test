@@ -50,6 +50,16 @@ void MessageNode::run() {
     }
 }
 
+QString MessageNode::getGUID() {
+    if (mp_publisher) {
+        std::ostringstream os;
+        os << mp_publisher->getGuid();
+        QString guid_str = QString::fromStdString(os.str());
+        return guid_str;
+    }
+    return QString();
+}
+
 void PubListener::onPublicationMatched(Publisher *pub, MatchingInfo &info) {
     (void) pub;
 
@@ -95,6 +105,7 @@ void SubListener<T>::onNewDataMessage(Subscriber *sub) {
             std::ostringstream os;
             os << m_info.sample_identity.writer_guid();
             QString guid_str = QString::fromStdString(os.str());
+
             emit m_new_data_message_cb(guid_str, std::move(st));
         }
     }

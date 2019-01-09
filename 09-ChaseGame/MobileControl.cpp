@@ -21,42 +21,76 @@
 
 #include "MobileControl.h"
 #include "Communication.h"
+#include "DataStructure.h"
 #include "UserDefinedMessageNode.h"
 
-MobileControl::MobileControl() = default;
+MobileControl::MobileControl() : timer_(new QTimer) {
+    timer_->setInterval(100);
+    connect(timer_.get(), &QTimer::timeout, this, &MobileControl::update);
+}
 
 MobileControl::~MobileControl() = default;
 
-void MobileControl::run() {
-    std::cout << "MobileControl running..." << std::endl;
 
-    double angle = 0;
-    Status status;
-    Vec3 postion;
-    Vec3 direction;
-    std::string message;
+//TODO: 1. MobileControl 不能堵塞自己的线程
+//TODO: 2. MobileControl 如果以QTimer去update, QTimer不能在其他线程开启
+//TODO: 3. MobileControl update会覆盖新的动作
 
+void MobileControl::start() {
+    QTimer *local_timer = new QTimer;
+    connect(local_timer, &QTimer::timeout, this, &MobileControl::update);
+    local_timer->setInterval(100);
+
+    local_timer->start();
+}
+
+void MobileControl::update() {
+//    std::cout << "MobileControl running..." << std::endl;
     srand((int) time(0));
-    postion.x() = rand() % 10;
-    postion.z() = rand() % 10;
 
-    while (1) {
-        angle += 0.2;
+    static double angle = 0;
+    static Vec3 postion(rand() % 10, 0, rand() % 10);
+
+    Target target = Singleton<Target>::getInstance()->findByID(Key<Target>("All"));
+    bool find_target = target.find_target();
+
+    Vec3 direction;
+    if (!find_target) {
+        angle += 0.1;
         direction.x() = std::sin(angle);
         direction.z() = std::cos(angle);
+    } else {
+        Vec3 target_pos = target.target_pos();
 
-        postion = postion + direction;
+        direction.x() = target_pos.x() - postion.x();
+        direction.z() = target_pos.z() - postion.z();
+        direction.x() = direction.x() / 10;
+        direction.z() = direction.z() / 10;
 
-        status.position(postion);
-        status.direction(direction);
-//        std::cout << "MobileControl update status: " << status << std::endl;
-        emit updateStatus(status);
-
-        eprosima::fastrtps::eClock::my_sleep(250); // Sleep 250 ms
+        std::cout << "MobileControl find target: " << target << std::endl;
+        emit updateTarget(target);
     }
+    postion = postion + direction;
+
+    Status status;
+    status.position(postion);
+    status.direction(direction);
+//        std::cout << "MobileControl update status: " << status << std::endl;
+    emit updateStatus(status);
+}
+
+void MobileControl::receiveStatus(QString guid, const Status &status) {
+    Singleton<Status>::getInstance()->update(Key<Status>(guid), status);
+
+//    Status b = Singleton<Status>::getInstance()->findByID(Key<Status>("guid"));
+}
+
+void MobileControl::receiveTarget(QString guid, const Target &target) {
+    Singleton<Target>::getInstance()->update(Key<Target>("All"), target);
 }
 
 Control::Control() : mobileControl(new MobileControl) {
+
 }
 
 Control::~Control() {
@@ -66,7 +100,7 @@ Control::~Control() {
 
 void Control::init() {
     connect(&workerThread, &QThread::finished, mobileControl, &QObject::deleteLater);
-    connect(this, &Control::start, mobileControl, &MobileControl::run);
+    connect(this, &Control::start, mobileControl, &MobileControl::start);
     mobileControl->moveToThread(&workerThread);
     workerThread.start();
 
@@ -78,4 +112,13 @@ void Control::createConnect(const Communication &communication) {
             &StatusMessageNode::publishMessage);
     connect(mobileControl, &MobileControl::updateTarget, communication.target_node_,
             &TargetMessageNode::publishMessage);
+
+    connect(communication.status_node_, &StatusMessageNode::receiveMessage, mobileControl,
+            &MobileControl::receiveStatus);
+    connect(communication.target_node_, &TargetMessageNode::receiveMessage, mobileControl,
+            &MobileControl::receiveTarget);
+
+    mobileControl->cur_guid = communication.status_node_->getGUID();
+
+    std::cout << "cur guid is: " << mobileControl->cur_guid.toStdString() << std::endl;
 }

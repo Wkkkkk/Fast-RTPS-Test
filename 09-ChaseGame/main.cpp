@@ -24,7 +24,6 @@
 
 #include "RTPSNode.h"
 #include "MainWindow.h"
-#include "DataStructure.h"
 #include "Communication.h"
 #include "MobileControl.h"
 
@@ -36,14 +35,6 @@ int main(int argc, char *argv[]) {
     qRegisterMetaType<Vec3>("Vec3");
     qRegisterMetaType<Status>("Status");
     qRegisterMetaType<Target>("Target");
-
-    std::cout << "bf Vec3" << std::endl;
-    Vec3 a = Singleton<Vec3>::getInstance()->findByID(Key<Vec3>("Abc"));
-    std::cout << "Vec3: " << a << " " << std::isnan(a.x()) << std::endl;
-
-    std::cout << "bf Status" << std::endl;
-    Status b = Singleton<Status>::getInstance()->findByID(Key<Status>("Abc"));
-    // std::cout << "Status: " << b.position() << " " << b.direction() << " " << b.message() << std::endl;
 
     QCommandLineParser parser;
     parser.setApplicationDescription("A Test for fast-rtps message.");
@@ -63,9 +54,6 @@ int main(int argc, char *argv[]) {
     std::cout << "show_widget: " << show_widget << std::endl;
 
     Communication communication;
-    Control control;
-    control.createConnect(communication);
-
     MainWindow main_window;
     if (show_widget) {
         main_window.createConnect(communication);
@@ -73,11 +61,13 @@ int main(int argc, char *argv[]) {
         main_window.showMaximized();
     }
 
-    control.init();
-    control.start();  // trigger signal
-
     communication.init();
     communication.start();  // trigger signal
+
+    Control control;
+    control.createConnect(communication);
+    control.init();
+    control.start();  // trigger signal
 
     return app.exec();
 }

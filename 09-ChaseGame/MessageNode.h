@@ -84,6 +84,8 @@ public:
 
     virtual bool init() {}
 
+    QString getGUID();
+
     Q_DISABLE_COPY(MessageNode)
 
 protected:

@@ -103,9 +103,9 @@ public:
 
     static std::shared_ptr<Singleton> getInstance() { return instance; }
 
-    void update(const T &obj) {
+    void update(const Key<T> &key, const T &obj) {
         std::lock_guard<std::mutex> lck(mtx);
-        handle.update(obj);
+        handle.update(key, obj);
     }
 
     T findByID(const Key<T> &key) const {

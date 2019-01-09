@@ -23,6 +23,8 @@
 #include <QtCore/QObject>
 #include <QtCore/QThread>
 #include <QtCore/QString>
+#include <QtCore/QTimer>
+#include <QtCore/QScopedPointer>
 
 class Status;
 
@@ -37,15 +39,22 @@ public:
 
     ~MobileControl();
 
+    QString cur_guid;
+    QScopedPointer<QTimer> timer_;
 signals:
 
     void updateStatus(const Status &status);
 
     void updateTarget(const Target &target);
-
 public slots:
 
-    void run();
+    void update();
+
+    void start();
+
+    void receiveStatus(QString guid, const Status &status);
+
+    void receiveTarget(QString guid, const Target &target);
 };
 
 

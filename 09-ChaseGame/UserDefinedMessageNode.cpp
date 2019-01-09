@@ -110,5 +110,5 @@ void TargetMessageNode::publishMessage(Target target) {
 
     mp_publisher->write(&target);
     ++msgsent;
-    std::cout << "TargetMessageNode sending sample, count=" << msgsent << std::endl;
+    std::cout << "TargetMessageNode sending sample2: " << msgsent << " " << target << std::endl;
 }
