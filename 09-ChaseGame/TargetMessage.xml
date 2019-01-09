@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<profiles>
+    <participant profile_name="participant_target">
+        <rtps>
+            <name>target</name>
+            <builtin>
+                <domainId>80</domainId>
+                <leaseDuration>
+                    <durationbyname>INFINITE</durationbyname>
+                </leaseDuration>
+            </builtin>
+        </rtps>
+    </participant>
+
+    <publisher profile_name="publisher_target">
+        <topic>
+            <name>target_topic</name>
+            <dataType>Target</dataType>
+            <kind>NO_KEY</kind>
+            <historyQos>
+                <kind>KEEP_LAST</kind>
+                <depth>20</depth>
+            </historyQos>
+        </topic>
+        <qos>
+            <reliability>
+                <kind>RELIABLE</kind>
+            </reliability>
+            <publishMode>
+                <kind>ASYNCHRONOUS</kind>
+            </publishMode>
+        </qos>
+        <throughputController>
+            <bytesPerPeriod>10000</bytesPerPeriod>
+            <periodMillisecs>1000</periodMillisecs>
+        </throughputController>
+        <historyMemoryPolicy>PREALLOCATED</historyMemoryPolicy>
+    </publisher>
+
+    <subscriber profile_name="subscriber_target">
+        <topic>
+            <name>target_topic</name>
+            <dataType>Target</dataType>
+            <kind>NO_KEY</kind>
+            <historyQos>
+                <kind>KEEP_LAST</kind>
+                <depth>20</depth>
+            </historyQos>
+        </topic>
+        <qos>
+            <reliability>
+                <kind>RELIABLE</kind>
+            </reliability>
+        </qos>
+        <historyMemoryPolicy>PREALLOCATED</historyMemoryPolicy>
+    </subscriber>
+
+</profiles>
