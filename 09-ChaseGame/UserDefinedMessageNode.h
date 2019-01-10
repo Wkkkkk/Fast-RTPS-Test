@@ -42,7 +42,7 @@ private:
     StatusPubSubType myType;
 signals:
 
-    void receiveMessage(QString guid, Status status);
+    void receiveMessage(GUID_t guid, Status status);
 
 public slots:
 
@@ -66,7 +66,7 @@ private:
     TargetPubSubType myType;
 signals:
 
-    void receiveMessage(QString guid, Target pos);
+    void receiveMessage(GUID_t guid, Target pos);
 
 public slots:
 

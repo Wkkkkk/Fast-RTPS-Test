@@ -119,6 +119,8 @@ void MainWindow::createConnect(const RTPSNodeThread &rtpsNodeThread) {
 void MainWindow::createConnect(const Communication &communication) {
     connect(communication.status_node_, &StatusMessageNode::receiveMessage, osgwidget_, &OSGWidget::updateStatusOfNode);
     connect(communication.target_node_, &TargetMessageNode::receiveMessage, osgwidget_, &OSGWidget::updateTargetOfNode);
+
+    osgwidget_->setCurGUID2PickHandler(communication.target_node_->getGUID());
 }
 
 void MainWindow::openFile() {

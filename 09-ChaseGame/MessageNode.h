@@ -33,6 +33,8 @@
 #include <fastrtps/subscriber/SubscriberListener.h>
 #include <fastrtps/subscriber/SampleInfo.h>
 
+#include "Common.h"
+
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
@@ -48,16 +50,16 @@ public:
     void onNewDataMessage(eprosima::fastrtps::Subscriber *sub);
 
     inline void
-    setNewDataMessageCallback(std::function<void(QString, T)> callback) { m_new_data_message_cb = callback; }
+    setNewDataMessageCallback(std::function<void(GUID_t, T)> callback) { m_new_data_message_cb = callback; }
 
     inline void
-    setSubscriptionMatchCallback(std::function<void(QString, bool)> callback) { m_subscription_cb = callback; }
+    setSubscriptionMatchCallback(std::function<void(GUID_t, bool)> callback) { m_subscription_cb = callback; }
 
     eprosima::fastrtps::SampleInfo_t m_info;
     int n_matched;
     int n_msg;
-    std::function<void(QString, T)> m_new_data_message_cb;
-    std::function<void(QString, bool)> m_subscription_cb;
+    std::function<void(GUID_t, T)> m_new_data_message_cb;
+    std::function<void(GUID_t, bool)> m_subscription_cb;
 };
 
 class PubListener : public eprosima::fastrtps::PublisherListener {
@@ -69,10 +71,10 @@ public:
     void onPublicationMatched(eprosima::fastrtps::Publisher *pub, eprosima::fastrtps::rtps::MatchingInfo &info);
 
     inline void
-    setPublicationMatchCallback(std::function<void(QString, bool)> callback) { m_publication_cb = callback; }
+    setPublicationMatchCallback(std::function<void(GUID_t, bool)> callback) { m_publication_cb = callback; }
 
     int n_matched;
-    std::function<void(QString, bool)> m_publication_cb;
+    std::function<void(GUID_t, bool)> m_publication_cb;
 };
 
 class MessageNode : public QObject {
@@ -84,7 +86,7 @@ public:
 
     virtual bool init() {}
 
-    QString getGUID();
+    GUID_t getGUID();
 
     Q_DISABLE_COPY(MessageNode)
 
@@ -97,7 +99,7 @@ private:
     PubListener m_pub_listener;
 signals:
 
-    void connectPartner(const QString &guid, bool connect);
+    void connectPartner(GUID_t guid, bool connect);
 
 public slots:
 

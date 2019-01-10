@@ -21,6 +21,9 @@
 #define FAST_RTPS_TEST_COMMON_H
 
 #include <string>
+#include <fastrtps/rtps/common/Guid.h>
+
+using eprosima::fastrtps::rtps::GUID_t;
 
 const char root_node_name[] = "root_node";
 const char test_node_name[] = "test_node";

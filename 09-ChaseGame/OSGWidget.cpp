@@ -17,6 +17,8 @@
  * limitations under the License.
 */
 
+#include <sstream>
+
 #include <QtWidgets/QGridLayout>
 #include <QtCore/QDir>
 #include <QtCore/QTextStream>
@@ -36,7 +38,6 @@
 #include <osgGA/StateSetManipulator>
 #include <osgViewer/ViewerEventHandlers>
 
-#include "Common.h"
 #include "OSGWidget.h"
 #include "PickHandler.h"
 #include "NodeCallback.h"
@@ -49,6 +50,7 @@ OSGWidget::OSGWidget(QWidget *parent) :
         main_view_(nullptr),
         root_node_(nullptr),
         text_node_(nullptr),
+        pick_handler_(nullptr),
         update_timer_(new QTimer) {}
 
 OSGWidget::~OSGWidget() = default;
@@ -127,7 +129,9 @@ void OSGWidget::initCamera() {
 
     main_view_->addEventHandler(new osgViewer::StatsHandler);
     main_view_->addEventHandler(new NodeTreeHandler(root_node_));
-    main_view_->addEventHandler(new PickHandler(root_node_));
+
+    pick_handler_ = new PickHandler(root_node_);
+    main_view_->addEventHandler(pick_handler_);
     main_view_->setSceneData(root_node_.get());
     main_view_->setCameraManipulator(new osgGA::TrackballManipulator);
 
@@ -333,13 +337,16 @@ void OSGWidget::updatePositionOfNode(const QString &guid, const Vec3 &pos) {
     node->setPosition(osg::Vec3d(pos.x(), pos.y(), pos.z()));
 }
 
-void OSGWidget::updateStatusOfNode(const QString &guid, const Status &status) {
-//    std::cout << "updateStatusOfNode: " << guid.toStdString() << " status: " << status << std::endl;
+void OSGWidget::updateStatusOfNode(const GUID_t &guid, const Status &status) {
+    std::ostringstream os;
+    os << guid;
+    std::string guid_str = os.str();
+
     static osg::ref_ptr<osg::Switch> test_node = dynamic_cast<osg::Switch *>(
             NodeTreeSearch::findNodeWithName(root_node_, test_node_name));
 
     osg::ref_ptr<osg::PositionAttitudeTransform> node = dynamic_cast<osg::PositionAttitudeTransform *>(
-            NodeTreeSearch::findNodeWithName(test_node, guid.toStdString().c_str()));
+            NodeTreeSearch::findNodeWithName(test_node, guid_str.c_str()));
 
     if (!node.valid()) {
         osg::ref_ptr<osg::PositionAttitudeTransform> pos = new osg::PositionAttitudeTransform;
@@ -349,7 +356,7 @@ void OSGWidget::updateStatusOfNode(const QString &guid, const Status &status) {
         geode->addDrawable(point_sphere);
 
         pos->addChild(geode);
-        pos->setName(guid.toStdString());
+        pos->setName(guid_str);
 
         test_node->addChild(pos);
         node.swap(pos);
@@ -359,6 +366,10 @@ void OSGWidget::updateStatusOfNode(const QString &guid, const Status &status) {
     node->setPosition(osg::Vec3d(pos.x(), pos.y(), pos.z()));
 }
 
-void OSGWidget::updateTargetOfNode(const QString &guid, const Target &target) {
-    std::cout << "updateTargetOfNode: " << guid.toStdString() << " target: " << target << std::endl;
+void OSGWidget::updateTargetOfNode(const GUID_t &guid, const Target &target) {
+//    std::cout << "updateTargetOfNode: " << guid << " target: " << target << std::endl;
+}
+
+void OSGWidget::setCurGUID2PickHandler(const GUID_t &cur_guid) {
+    pick_handler_->cur_guid_ = cur_guid;
 }

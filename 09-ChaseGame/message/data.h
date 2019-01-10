@@ -31,6 +31,7 @@
 #include <map>
 #include <bitset>
 #include <iostream>
+#include <complex>
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
@@ -117,6 +118,14 @@ public:
     eProsima_user_DllExport Vec3 &operator=(Vec3 &&x);
 
     /*!
+     * @brief Move assignment.
+     * @param x Reference to the object Vec3 that will be copied.
+     */
+    eProsima_user_DllExport Vec3 operator*(double r) {
+        return Vec3(m_x * r, m_y * r, m_z * r);
+    }
+
+    /*!
      * @brief This function sets a value in member x
      * @param _x New value for member x
      */
@@ -186,6 +195,18 @@ public:
      */
     inline eProsima_user_DllExport double &z() {
         return m_z;
+    }
+
+    inline eProsima_user_DllExport Vec3 &normalize() {
+        double length2 = m_x * m_x + m_y * m_y + m_z * m_z;
+        if (length2 > 1e-6) {
+            double length = std::sqrt(length2);
+            double factor = 1 / length;
+            m_x *= factor;
+            m_y *= factor;
+            m_z *= factor;
+        }
+        return *this;
     }
 
     /*!
@@ -606,7 +627,7 @@ inline std::ostream &operator<<(std::ostream &output, const Status &s) {
 }
 
 inline std::ostream &operator<<(std::ostream &output, const Target &t) {
-    output << "find: " << t.find_target() << " position: " << t.target_pos();
+    output << "target: " << t.find_target() << " position: " << t.target_pos();
     return output;
 }
 

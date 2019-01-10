@@ -19,8 +19,9 @@
 
 #include "PickHandler.h"
 #include "NodeTreeSearch.h"
-#include "Common.h"
 #include "DataStructure.h"
+
+#include "message/data.h"
 
 PickHandler::PickHandler(osg::Switch *root_node) : root_node_(root_node) {
 
@@ -85,7 +86,7 @@ void PickHandler::pick(const osgGA::GUIEventAdapter &ea, osgViewer::View *view) 
             target.find_target(true);
             target.target_pos(Vec3(local_point.x(), local_point.y(), local_point.z()));
 
-            Singleton<Target>::getInstance()->update(Key<Target>("All"), target);
+            Singleton<Target>::getInstance()->update(Key<Target>(cur_guid_), target);
         }
     } //left button
 }
@@ -94,5 +95,6 @@ void PickHandler::cleanup() {
     Target target;
     target.find_target(false);
 
-    Singleton<Target>::getInstance()->update(Key<Target>("All"), target);
+    std::cout << "clean target" << std::endl;
+    Singleton<Target>::getInstance()->update(Key<Target>(cur_guid_), target);
 }

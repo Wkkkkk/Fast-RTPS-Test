@@ -18,6 +18,7 @@
 */
 
 #include "DataStructure.h"
+#include "message/data.h"
 
 //static member initialize:
 // <data type> <class name>::<member name>=<value>

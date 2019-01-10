@@ -38,12 +38,12 @@ bool StatusMessageNode::init() {
     Domain::registerType(mp_participant, (TopicDataType *) &myType);
 
     // Register callback before they are called!!
-    std::function<void(QString, Status)> new_message_callback = std::bind(&StatusMessageNode::receiveMessage, this,
-                                                                          std::placeholders::_1, std::placeholders::_2);
+    std::function<void(GUID_t, Status)> new_message_callback = std::bind(&StatusMessageNode::receiveMessage, this,
+                                                                         std::placeholders::_1, std::placeholders::_2);
     m_sub_listener.setNewDataMessageCallback(new_message_callback);
 
-    std::function<void(QString, bool)> match_callback = std::bind(&MessageNode::connectPartner, this,
-                                                                  std::placeholders::_1, std::placeholders::_2);
+    std::function<void(GUID_t, bool)> match_callback = std::bind(&MessageNode::connectPartner, this,
+                                                                 std::placeholders::_1, std::placeholders::_2);
     m_sub_listener.setSubscriptionMatchCallback(match_callback);
 
     // Create Publisher
@@ -82,12 +82,12 @@ bool TargetMessageNode::init() {
     Domain::registerType(mp_participant, (TopicDataType *) &myType);
 
     // Register callback before they are called!!
-    std::function<void(QString, Target)> new_message_callback = std::bind(&TargetMessageNode::receiveMessage, this,
-                                                                          std::placeholders::_1, std::placeholders::_2);
+    std::function<void(GUID_t, Target)> new_message_callback = std::bind(&TargetMessageNode::receiveMessage, this,
+                                                                         std::placeholders::_1, std::placeholders::_2);
     m_sub_listener.setNewDataMessageCallback(new_message_callback);
 
-    std::function<void(QString, bool)> match_callback = std::bind(&MessageNode::connectPartner, this,
-                                                                  std::placeholders::_1, std::placeholders::_2);
+    std::function<void(GUID_t, bool)> match_callback = std::bind(&MessageNode::connectPartner, this,
+                                                                 std::placeholders::_1, std::placeholders::_2);
     m_sub_listener.setSubscriptionMatchCallback(match_callback);
 
     // Create Publisher
@@ -110,5 +110,5 @@ void TargetMessageNode::publishMessage(Target target) {
 
     mp_publisher->write(&target);
     ++msgsent;
-    std::cout << "TargetMessageNode sending sample2: " << msgsent << " " << target << std::endl;
+//    std::cout << "TargetMessageNode sending sample2: " << msgsent << " " << target << std::endl;
 }

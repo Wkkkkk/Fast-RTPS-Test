@@ -42,7 +42,7 @@ void Communication::init() {
         target_node_->moveToThread(&workerThread);
 
         workerThread.start();
-        std::cout << "workerThread start..." << std::endl;
+        std::cout << "Communication start..." << std::endl;
     } else {
         std::cout << "failed to create RTPSNode..." << std::endl;
     }

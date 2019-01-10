@@ -26,6 +26,8 @@
 #include <QtCore/QTimer>
 #include <QtCore/QScopedPointer>
 
+#include "Common.h"
+
 class Status;
 
 class Target;
@@ -39,7 +41,7 @@ public:
 
     ~MobileControl();
 
-    QString cur_guid;
+    GUID_t cur_guid;
     QScopedPointer<QTimer> timer_;
 signals:
 
@@ -52,9 +54,9 @@ public slots:
 
     void start();
 
-    void receiveStatus(QString guid, const Status &status);
+    void receiveStatus(GUID_t guid, const Status &status);
 
-    void receiveTarget(QString guid, const Target &target);
+    void receiveTarget(GUID_t guid, const Target &target);
 };
 
 

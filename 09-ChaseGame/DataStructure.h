@@ -25,39 +25,44 @@
 #include <memory>
 #include <thread>
 #include <algorithm>
+#include <iostream>
 
-#include <QtCore/QString>
-#include "message/data.h"
+//#include <QtCore/QString>
+#include <fastrtps/rtps/common/Guid.h>
 
+using eprosima::fastrtps::rtps::GUID_t;
 
 template<class T>
 class Key {
 private:
-    QString id_;
+    GUID_t id_;
 
 public:
     Key() = default;
 
-    explicit Key(QString id)
-            : id_(id) {
+    explicit Key(GUID_t id)
+            : id_(std::move(id)) {
     }
 
-    void setId(QString id) {
+    void setId(GUID_t id) {
         id_ = id;
     }
 
-    QString getId() const {
+    GUID_t getId() const {
         return id_;
     }
 
     bool operator<(const Key<T> &right) const {
-        return id_.size() < right.getId().size();
+        return id_ < right.getId();
     }
 
     bool operator==(const Key<T> &right) const {
         return id_ == right.getId();
     }
 };
+
+template<class T>
+using Filter = std::function<bool(const T &)>;
 
 template<class T>
 class Handle {
@@ -85,12 +90,28 @@ public:
         return it->second;
     }
 
+    std::vector<T> findByFilter(const Filter<T> &filter) const {
+        std::vector<T> vector;
+        for (const auto &pair : map_) {
+            if (filter(pair.second))
+                vector.push_back(pair.second);
+        }
+        return vector;
+    }
+
     bool empty() const {
         return map_.empty();
     }
 
     size_t size() const {
         return map_.size();
+    }
+
+    void print() const {
+        std::cout << "----------" << std::endl;
+        for (const auto &pair : map_) {
+            std::cout << "key: " << pair.first.getId() << " value: " << pair.second << std::endl;
+        }
     }
 };
 
@@ -110,12 +131,22 @@ public:
 
     T findByID(const Key<T> &key) const {
         std::lock_guard<std::mutex> lck(mtx);
-        handle.findByKey(key);
+        return handle.findByKey(key);
+    }
+
+    std::vector<T> findByFilter(const Filter<T> &filter) const {
+        std::lock_guard<std::mutex> lck(mtx);
+        return handle.findByFilter(filter);
     }
 
     void remove(const Key<T> &key) {
         std::lock_guard<std::mutex> lck(mtx);
         handle.remove(key);
+    }
+
+    void print() {
+        std::lock_guard<std::mutex> lck(mtx);
+        handle.print();
     }
 
 private:

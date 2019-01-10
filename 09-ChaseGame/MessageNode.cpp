@@ -16,9 +16,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
 */
-#include <stdlib.h>
-#include <sstream>
-
 #include <fastrtps/participant/Participant.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/publisher/Publisher.h>
@@ -50,14 +47,11 @@ void MessageNode::run() {
     }
 }
 
-QString MessageNode::getGUID() {
+GUID_t MessageNode::getGUID() {
     if (mp_publisher) {
-        std::ostringstream os;
-        os << mp_publisher->getGuid();
-        QString guid_str = QString::fromStdString(os.str());
-        return guid_str;
+        return mp_publisher->getGuid();
     }
-    return QString();
+    return GUID_t();
 }
 
 void PubListener::onPublicationMatched(Publisher *pub, MatchingInfo &info) {
@@ -86,10 +80,7 @@ void SubListener<T>::onSubscriptionMatched(Subscriber *sub, MatchingInfo &info) 
         std::cout << "Subscriber unmatched" << std::endl;
     }
 
-    std::ostringstream os;
-    os << info.remoteEndpointGuid;
-    QString guid_str = QString::fromStdString(os.str());
-    emit m_subscription_cb(guid_str, connect);
+    emit m_subscription_cb(info.remoteEndpointGuid, connect);
 }
 
 template<class T>
@@ -102,11 +93,8 @@ void SubListener<T>::onNewDataMessage(Subscriber *sub) {
         if (m_info.sampleKind == ALIVE) {
             // Print your structure data here.
             // m_info.sample_identity.writer_guid()
-            std::ostringstream os;
-            os << m_info.sample_identity.writer_guid();
-            QString guid_str = QString::fromStdString(os.str());
 
-            emit m_new_data_message_cb(guid_str, std::move(st));
+            emit m_new_data_message_cb(m_info.sample_identity.writer_guid(), std::move(st));
         }
     }
 }

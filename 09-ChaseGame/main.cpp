@@ -26,12 +26,14 @@
 #include "MainWindow.h"
 #include "Communication.h"
 #include "MobileControl.h"
+#include "DataStructure.h"
 
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
     QApplication::setApplicationName("FastRtps_OSG");
     QApplication::setApplicationVersion("1.0.0");
 
+    qRegisterMetaType<GUID_t>("GUID_t");
     qRegisterMetaType<Vec3>("Vec3");
     qRegisterMetaType<Status>("Status");
     qRegisterMetaType<Target>("Target");
@@ -54,13 +56,6 @@ int main(int argc, char *argv[]) {
     std::cout << "show_widget: " << show_widget << std::endl;
 
     Communication communication;
-    MainWindow main_window;
-    if (show_widget) {
-        main_window.createConnect(communication);
-        main_window.setMinimumSize(800, 600);  //graphic_context bugs!
-        main_window.showMaximized();
-    }
-
     communication.init();
     communication.start();  // trigger signal
 
@@ -68,6 +63,13 @@ int main(int argc, char *argv[]) {
     control.createConnect(communication);
     control.init();
     control.start();  // trigger signal
+
+    MainWindow main_window;
+    if (show_widget) {
+        main_window.createConnect(communication);
+        main_window.setMinimumSize(800, 600);  //graphic_context bugs!
+        main_window.showMaximized();
+    }
 
     return app.exec();
 }

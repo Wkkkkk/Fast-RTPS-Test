@@ -32,6 +32,8 @@
 #include <osgGA/GUIEventAdapter>
 #include <osgGA/GUIActionAdapter>
 
+#include "Common.h"
+
 class PickHandler : public osgGA::GUIEventHandler {
 public:
     explicit PickHandler(osg::Switch *root_node);
@@ -42,11 +44,11 @@ public:
 
     void pick(const osgGA::GUIEventAdapter &ea, osgViewer::View *view);
 
+    GUID_t cur_guid_;
 private:
     void cleanup();
 
     osg::ref_ptr<osg::Switch> root_node_;
-
     float _mx, _my;
 };
 

@@ -39,11 +39,16 @@
 #include <osgGA/TerrainManipulator>
 #include <osgQt/GraphicsWindowQt>
 
+#include "Common.h"
+
 class Vec3;
 
 class Status;
 
 class Target;
+
+class PickHandler;
+
 
 class OSGWidget : public QWidget, public osgViewer::CompositeViewer {
 Q_OBJECT
@@ -58,6 +63,7 @@ public:
 
     void readDataFromFile(const QFileInfo &file_info);
 
+    void setCurGUID2PickHandler(const GUID_t &cur_guid);
 private:
     void paintEvent(QPaintEvent *) final;
 
@@ -82,17 +88,18 @@ private:
     osg::ref_ptr<osg::Switch> root_node_;
     osg::ref_ptr<osg::Switch> text_node_;
 
-    QScopedPointer<QTimer> update_timer_;
+    osg::ref_ptr<PickHandler> pick_handler_;
 
+    QScopedPointer<QTimer> update_timer_;
 public slots:
 
     void createOrRemoveNode(const QString &guid, bool create);
 
     void updatePositionOfNode(const QString &guid, const Vec3 &pos);
 
-    void updateStatusOfNode(const QString &guid, const Status &status);
+    void updateStatusOfNode(const GUID_t &guid, const Status &status);
 
-    void updateTargetOfNode(const QString &guid, const Target &target);
+    void updateTargetOfNode(const GUID_t &guid, const Target &target);
 };
 
 
