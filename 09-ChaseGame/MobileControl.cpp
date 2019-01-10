@@ -39,7 +39,7 @@ void MobileControl::start() {
 }
 
 void MobileControl::update() {
-//    std::cout << "MobileControl running..." << std::endl;
+
     static std::default_random_engine e;
     static std::uniform_int_distribution<int> pos_distribution(-10, 10);
     static std::uniform_int_distribution<unsigned> speed_distribution(0, 5);

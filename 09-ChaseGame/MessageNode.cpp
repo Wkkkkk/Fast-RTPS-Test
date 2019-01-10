@@ -39,7 +39,14 @@ class SubListener<Target>;
 
 MessageNode::MessageNode() : mp_participant(nullptr), mp_publisher(nullptr), mp_subscriber(nullptr) {}
 
-MessageNode::~MessageNode() { Domain::removeParticipant(mp_participant); }
+MessageNode::~MessageNode() {
+    if (mp_participant) {
+        Domain::removeSubscriber(mp_subscriber);
+        Domain::removePublisher(mp_publisher);
+        Domain::removeParticipant(mp_participant);
+        mp_participant = nullptr;
+    }
+}
 
 void MessageNode::run() {
     while (m_pub_listener.n_matched == 0) {
