@@ -24,7 +24,6 @@
 #include <QtWidgets/QStatusBar>
 #include <QtCore/QDebug>
 
-#include "RTPSNode.h"
 #include "OSGWidget.h"
 #include "MainWindow.h"
 #include "Communication.h"
@@ -108,12 +107,6 @@ void MainWindow::createDockWidget() {
     //connect(edit_widget_, SIGNAL(itemClicked(QTreeWidgetItem *, int)), this, SLOT(TreeWidgetClicked(QTreeWidgetItem *, int)));
     //connect(edit_widget_, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int)), this, SLOT(TreeWidgetDoubleClicked(QTreeWidgetItem *, int)));
     //connect(edit_widget_, SIGNAL(itemPressed(QTreeWidgetItem *, int)), this, SLOT(TreeWidgetRightedClicked(QTreeWidgetItem *, int)));
-}
-
-void MainWindow::createConnect(const RTPSNodeThread &rtpsNodeThread) {
-    connect(&rtpsNodeThread, &RTPSNodeThread::createOrRemoveNodeWithName, osgwidget_, &OSGWidget::createOrRemoveNode);
-    connect(&rtpsNodeThread, &RTPSNodeThread::updatePositionOfNodeWithName, osgwidget_,
-            &OSGWidget::updatePositionOfNode);
 }
 
 void MainWindow::createConnect(const Communication &communication) {

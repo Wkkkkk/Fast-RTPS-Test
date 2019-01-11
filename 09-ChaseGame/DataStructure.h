@@ -27,7 +27,6 @@
 #include <algorithm>
 #include <iostream>
 
-//#include <QtCore/QString>
 #include <fastrtps/rtps/common/Guid.h>
 
 using eprosima::fastrtps::rtps::GUID_t;

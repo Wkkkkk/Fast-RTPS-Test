@@ -39,7 +39,7 @@ Q_OBJECT
 public:
     MobileControl();
 
-    ~MobileControl();
+    ~MobileControl() final;
 
     GUID_t cur_guid;
     QScopedPointer<QTimer> timer_;
@@ -66,7 +66,7 @@ Q_OBJECT
 public:
     Control();
 
-    ~Control();
+    ~Control() final;
     Q_DISABLE_COPY(Control)
 
     void init();

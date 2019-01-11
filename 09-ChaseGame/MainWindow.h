@@ -31,8 +31,6 @@
 
 class OSGWidget;
 
-class RTPSNodeThread;
-
 class Communication;
 
 class MainWindow : public QMainWindow {
@@ -41,8 +39,6 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
 
     ~MainWindow() final;
-
-    void createConnect(const RTPSNodeThread &rtpsNodeThread);
 
     void createConnect(const Communication &communication);
 

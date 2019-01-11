@@ -22,11 +22,11 @@
 #include <QtWidgets/QApplication>
 #include <QtCore/QCommandLineParser>
 
-#include "RTPSNode.h"
 #include "MainWindow.h"
 #include "Communication.h"
 #include "MobileControl.h"
 #include "DataStructure.h"
+#include "message/data.h"
 
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);

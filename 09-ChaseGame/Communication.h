@@ -39,7 +39,7 @@ Q_OBJECT
 public:
     Communication();
 
-    ~Communication();
+    ~Communication() final;
     Q_DISABLE_COPY(Communication)
 
     void init();
